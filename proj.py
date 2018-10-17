@@ -1,10 +1,11 @@
+from wordcloud import WordCloud, STOPWORDS 
+import matplotlib.pyplot as plt
 import pandas as pd
 from ast import literal_eval
 import plotly.offline as off
 import nltk
 from nltk.corpus import wordnet
-from wordcloud import WordCloud, STOPWORDS 
-import matplotlib.pyplot as plt
+
 PS = nltk.stem.PorterStemmer()
 
 off.init_notebook_mode(connected=True)
