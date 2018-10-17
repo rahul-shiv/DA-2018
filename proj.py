@@ -1,9 +1,11 @@
 import pandas as pd
 from ast import literal_eval
+import plotly.offline as off
 import nltk
 from nltk.corpus import wordnet
 PS = nltk.stem.PorterStemmer()
 
+off.init_notebook_mode(connected=True)
 keywords = pd.read_csv('keywords.csv')
 meta = pd.read_csv('movies_metadata.csv')
 ratings = pd.read_csv('ratings_small.csv')
@@ -181,3 +183,47 @@ def genre_transform():
     return temp_dict
 genre_plot_dict = genre_transform()
 
+for key,value in genre_plot_dict.items():
+    x,y = zip(*sorted(value))
+    data = [dict(
+      type = 'scatter',
+      x = x,
+      y = y,
+      transforms = [dict(
+        type = 'aggregate',
+        groups = x,
+        aggregations = [dict(
+            target = 'y', func = 'sum', enabled = True),
+        ]
+      )]
+    )]
+    layout = dict(
+        title='Genre: '+key,
+        xaxis=dict(
+            rangeselector=dict(
+                buttons=list([
+                    dict(count=1,
+                         label='1m',
+                         step='month',
+                         stepmode='backward'),
+                    dict(count=6,
+                         label='6m',
+                         step='month',
+                         stepmode='backward'),
+                    dict(step='all')
+                ])
+            ),
+            rangeslider=dict(
+                visible = True
+            ),
+            type='date',
+            title = 'Year'
+        ),
+        yaxis = dict(title='revenue')
+            
+    )
+    #change to iplot in jupyter notebook
+    off.iplot({
+        "data": data,
+        "layout": layout
+    }, validate= False)
