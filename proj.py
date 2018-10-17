@@ -3,6 +3,8 @@ from ast import literal_eval
 import plotly.offline as off
 import nltk
 from nltk.corpus import wordnet
+from wordcloud import WordCloud, STOPWORDS 
+import matplotlib.pyplot as plt
 PS = nltk.stem.PorterStemmer()
 
 off.init_notebook_mode(connected=True)
@@ -227,3 +229,86 @@ for key,value in genre_plot_dict.items():
         "data": data,
         "layout": layout
     }, validate= False)
+    
+x,y = zip(*sorted(movies_list))
+data = [dict(
+      type = 'scatter',
+      x = x,
+      y = y,
+      transforms = [dict(
+        type = 'aggregate',
+        groups = x,
+        aggregations = [dict(
+            target = 'y', func = 'count', enabled = True),
+        ]
+      )]
+    )]
+layout = dict(
+    title='Number of movies released across the years',
+    xaxis=dict(
+        rangeselector=dict(
+            buttons=list([
+                dict(count=1,
+                     label='1m',
+                     step='month',
+                     stepmode='backward'),
+                dict(count=6,
+                     label='6m',
+                     step='month',
+                     stepmode='backward'),
+                dict(step='all')
+            ])
+        ),
+        rangeslider=dict(
+            visible = True
+        ),
+        type='date',
+        title = 'Year'
+    ),
+    yaxis = dict(title='number of movies')
+        
+)
+#change to iplot in jupyter notebook
+off.plot({
+    "data": data,
+    "layout": layout
+},auto_open=True, validate= False)
+
+
+def convert_key():
+    temp = ""
+    temp_series = df_keywords_synonyms['keywords']
+    for item in temp_series:
+        if type(item)!=type([]):
+            continue
+        for i in item:
+            temp = temp + i
+    return temp
+pd.set_option('display.max_colwidth', 50)
+
+
+# Creating word cloud for title:
+meta['title'] = meta['title'].astype(str)
+title = ' '.join(meta['title'])
+wordcloud = WordCloud(width = 800, height = 800, 
+                background_color ='white', 
+                stopwords = set(STOPWORDS), 
+                min_font_size = 10).generate(title)
+plt.figure(figsize = (8, 8), facecolor = None) 
+plt.imshow(wordcloud) 
+plt.axis("off") 
+plt.tight_layout(pad = 0)
+plt.show()
+
+# Creating word cloud for keywords:
+string = convert_key()
+
+wordcloud_key = WordCloud(width = 800, height = 800, 
+                background_color ='white', 
+                stopwords = set(STOPWORDS), 
+                min_font_size = 10).generate(string)
+plt.figure(figsize = (8, 8), facecolor = None) 
+plt.imshow(wordcloud_key) 
+plt.axis("off") 
+plt.tight_layout(pad = 0)
+plt.show()
