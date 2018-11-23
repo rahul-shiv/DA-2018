@@ -1,6 +1,6 @@
 # DA-2018
 <b>Requirements:</b><br/><br/>
-  Download credits.csv from https://www.kaggle.com/rounakbanik/the-movies-dataset
+  Download credits.csv from https://www.kaggle.com/rounakbanik/the-movies-dataset and place it outside the DA-2018 directory
 
 <b>Guide to Files:</b><br/><br/>
   run <b>pre_process.ipynb</b> to do data preprocessing<br/>
